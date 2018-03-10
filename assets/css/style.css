@@ -14,24 +14,75 @@ body {
 
 .gif-results {
     margin-top: 15px;
-    height: 75vh;
-    margin: 0 auto;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    width: 100%;
 }
 
 .add-btn {
     margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: stretch;
+    width: 100%;
 }
 
 .new-btn {
     margin: 5px;
+    flex: 1
 }
 
 .item {
-    margin-top: 15px;
-    
-
+    display: inline-block;
+    border: 1px solid #757575;
+    border-radius: 3px;
+    padding: 5px;
+    margin: 0px;
+    width: 100%;
 }
 
+.gif {
+    border-radius: 3px;
+    width: 100%
+}
+
+.instructions {
+    margin-top: 15px;
+}
+
+.btn-sm {
+    display: inline-block;
+    text-align: right;
+}
+
+.rating {
+    display: inline-block;
+    text-align: left;
+    border: none;
+}
+
+.text-div {
+    padding-top: 5px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-body {
+    background: #7bed9f;
+    font-size: 30px;
+}
+
+.next-line {
+    color: #fff;
+}
+
+@media(max-width: 575px) {
+    .gif-results {
+        display: flex;
+        justify-content: space-between;
+        align-items: stretch;
+        flex-wrap: wrap;
+        flex-direction: row;
+    }
+}

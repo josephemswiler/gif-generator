@@ -2,32 +2,38 @@
 
     //lazy load
     //flex box
+    let topics = ['Seinfeld', 'The Simpsons', 'Game of Thrones', 'Silicon Valley', 'Parks and Recreation', 'The Office'];
     let api = 'Kf9nuUBpJ1WYMe66AzBk2BAbIgtF4OxQ';
     let searchTerm = "";
     let queryURL = "";
     let currentBtns = [];
     let play = false;
+    let divArr = [];
 
     function addGifs(term) {
-        event.preventDefault();
 
-        searchTerm = ""
+        $('.instructions').css('display', 'none');
 
-        if (term) {
-            searchTerm = term.text();
-        } else {
-            searchTerm = $('.search-term').val().trim();
+        $('.gif-results').empty();
+
+        searchTerm = term;
+
+        if (event) {
+
+            event.preventDefault();
         }
 
         if (searchTerm !== "") {
 
             searchTerm = searchTerm.toLowerCase();
 
-            queryURL = "http://api.giphy.com/v1/gifs/search?q=" + searchTerm + "&api_key=" + api + "&limit=10";
+            queryURL = "https://api.giphy.com/v1/gifs/search?q=" + searchTerm + "&api_key=" + api + "&limit=10";
 
             $.get(queryURL).then(function (response) {
 
                 console.log(response)
+
+                divArr = [];
 
                 for (var i = 0; i < response.data.length; i++) {
 
@@ -36,14 +42,11 @@
                         //get gifs and append to page
                         let imgSrc = response.data[i].images.fixed_width_still.url;
 
-                        let gifDiv = $('<div class="item">');
-
-                        let className = searchTerm.replace(/\s+/g, '-')
-                            .toLowerCase();
+                        let gifDiv = $('<div>');
 
                         gifDiv.addClass('item')
-                            .addClass('gif-search-' + className);
-
+                            .addClass('card')
+                            .css('opacity', 0)
 
                         let newGif = $('<img>');
 
@@ -54,35 +57,85 @@
                             .attr('data-still', imgSrc)
                             .attr('data-animate', response.data[i].images.fixed_width.url);
 
-                        gifDiv.prepend(newGif);
+                        let textDiv = $('<div>');
 
-                        $('.gif-results').prepend(gifDiv);
-                    }
-                }
+                        let p = $('<button>')
+                            .addClass('rating btn btn-outline-secondary btn-sm')
+                            .prop('disabled', true)
+                            .text("Rating: " + response.data[i].rating.toUpperCase());
+                        let a = $('<span>')
+                            .addClass('fas fa-play')
+                        let b = $('<button>')
+                            .addClass('btn btn-outline-secondary btn-sm')
+                            .append(a)
 
-                //add btns 
-                let newBtn = $('<button>');
 
-                newBtn.text(searchTerm).addClass('new-btn btn btn-outline-secondary btn-lg');
+                        textDiv.addClass('text-div')
+                            .append(p)
+                            .append(b);
 
-                $('.add-btn').prepend(newBtn);
 
-                currentBtns.push(searchTerm);
+                        gifDiv.prepend(newGif)
+                            .append(textDiv);
 
-                console.log(searchTerm)
+                        divArr.push(gifDiv);
 
-                //here add enter, add function to search $(this) of .add-btn on click, first settop to div then append and lazyload, only have 10 buttons, two rows?
+                        $('.gif-results').append(gifDiv);
+
+                        lazyLoad();
+                    };
+                };
             });
+        };
+    };
+
+
+    function lazyLoad() {
+        for (var k = 0; k < divArr.length; k++) {
+
+            loader(k);
         }
     }
+
+    function loader(k) {
+        setTimeout(function () {
+
+            divArr[k].animate({
+                opacity: 1
+            });
+        }, k * 50);
+    }
+
+    function makeBtn(text) {
+
+        if (currentBtns.includes(text)) {
+            $('.search-term').val("");
+            return;
+        }
+
+        let newBtn = $('<button>');
+
+        newBtn.text(text).addClass('new-btn btn btn-outline-secondary btn-lg');
+
+        $('.add-btn').prepend(newBtn);
+
+        currentBtns.push(text);
+
+        $('.search-term').val("");
+    };
 
     function playGif() {
         let state = $(this).attr('data-state');
 
         if (state === 'still') {
+
             $(this).attr('src', $(this).attr('data-animate'));
 
             $(this).attr('data-state', 'animate');
+
+            $(this).parent().css("background-color", "#7bed9f");
+
+            $(this).parent().find('svg').removeClass('fa-play').addClass('fa-pause');
 
             state = 'animate';
         } else if (state === 'animate') {
@@ -90,26 +143,31 @@
             $(this).attr('src', $(this).attr('data-still'));
 
             $(this).attr('data-state', 'still');
+
+            $(this).parent().css("background-color", "");
+
+            $(this).parent().find('svg').removeClass('fa-pause').addClass('fa-play');
+
+            state = 'still';
         } else {};
     }
 
-    $('.add-btn').click(function () {
 
-        addGifs($(this));
 
-        $('.search-term').val("");
-        if (currentBtns.indexOf(searchTerm) === -1) {} else {
+    $('.new-btn').click(function () {
+
+        if (currentBtns.indexOf(searchTerm) === -1) {} else { //here
             $('.gif-results').remove(searchTerm);
         }
     })
 
     $('.search-term').keypress(function (event) {
 
-        if (event.which == 13) {
+        if (event.which == 13 && $('.search-term').val().trim() !== "") {
 
-            addGifs();
+            addGifs($(this).val().trim());
 
-            $('.search-term').val("");
+            makeBtn($(this).val().trim());
 
             return false;
         }
@@ -117,11 +175,23 @@
 
     $('.search-btn').click(function () {
 
-        addGifs();
+        if ($('.search-term').val().trim() === "") {
+            return;
+        }
+        addGifs($('.search-term').val().trim());
 
-        $('.search-term').val("");
+        makeBtn($('.search-term').val().trim());
     })
 
+    for (var j = 0; j < topics.length; j++) {
+        makeBtn(topics[j]);
+    }
+
     $(document).on("click", ".gif", playGif);
+
+    $(document).on("click", ".new-btn", function () {
+
+        addGifs($(this).text());
+    });
 
 })();
