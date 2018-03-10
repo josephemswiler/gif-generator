@@ -1,7 +1,5 @@
 (function () {
 
-    //lazy load
-    //flex box
     let topics = ['Seinfeld', 'The Simpsons', 'Game of Thrones', 'Silicon Valley', 'Parks and Recreation', 'The Office'];
     let api = 'Kf9nuUBpJ1WYMe66AzBk2BAbIgtF4OxQ';
     let searchTerm = "";
@@ -30,8 +28,6 @@
             queryURL = "https://api.giphy.com/v1/gifs/search?q=" + searchTerm + "&api_key=" + api + "&limit=10";
 
             $.get(queryURL).then(function (response) {
-
-                console.log(response)
 
                 divArr = [];
 
@@ -63,17 +59,17 @@
                             .addClass('rating btn btn-outline-secondary btn-sm')
                             .prop('disabled', true)
                             .text("Rating: " + response.data[i].rating.toUpperCase());
+
                         let a = $('<span>')
-                            .addClass('fas fa-play')
+                            .addClass('fas fa-play');
+
                         let b = $('<button>')
                             .addClass('btn btn-outline-secondary btn-sm')
-                            .append(a)
-
+                            .append(a);
 
                         textDiv.addClass('text-div')
                             .append(p)
                             .append(b);
-
 
                         gifDiv.prepend(newGif)
                             .append(textDiv);
@@ -95,7 +91,7 @@
 
             loader(k);
         }
-    }
+    };
 
     function loader(k) {
         setTimeout(function () {
@@ -104,12 +100,14 @@
                 opacity: 1
             });
         }, k * 50);
-    }
+    };
 
     function makeBtn(text) {
 
         if (currentBtns.includes(text)) {
+
             $('.search-term').val("");
+
             return;
         }
 
@@ -125,6 +123,7 @@
     };
 
     function playGif() {
+
         let state = $(this).attr('data-state');
 
         if (state === 'still') {
@@ -150,16 +149,14 @@
 
             state = 'still';
         } else {};
-    }
-
-
+    };
 
     $('.new-btn').click(function () {
 
         if (currentBtns.indexOf(searchTerm) === -1) {} else { //here
             $('.gif-results').remove(searchTerm);
         }
-    })
+    });
 
     $('.search-term').keypress(function (event) {
 
@@ -181,11 +178,13 @@
         addGifs($('.search-term').val().trim());
 
         makeBtn($('.search-term').val().trim());
-    })
+    });
 
-    for (var j = 0; j < topics.length; j++) {
-        makeBtn(topics[j]);
-    }
+    function starterBtns() {
+        for (var j = 0; j < topics.length; j++) {
+            makeBtn(topics[j]);
+        }
+    };
 
     $(document).on("click", ".gif", playGif);
 
@@ -194,4 +193,5 @@
         addGifs($(this).text());
     });
 
+    starterBtns();
 })();
