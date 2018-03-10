@@ -65,6 +65,7 @@
 
                         let b = $('<button>')
                             .addClass('btn btn-outline-secondary btn-sm')
+                            .prop('disabled', true)
                             .append(a);
 
                         textDiv.addClass('text-div')
