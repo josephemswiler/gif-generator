@@ -152,13 +152,6 @@
         } else {};
     };
 
-    $('.new-btn').click(function () {
-
-        if (currentBtns.indexOf(searchTerm) === -1) {} else { //here
-            $('.gif-results').remove(searchTerm);
-        }
-    });
-
     $('.search-term').keypress(function (event) {
 
         if (event.which == 13 && $('.search-term').val().trim() !== "") {
